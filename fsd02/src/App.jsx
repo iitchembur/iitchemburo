@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // --- Inline SVG Icons ---
 
-// NOTE: IconSun and IconMoon have been removed as they are no longer needed.
-
 const IconEdit = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -54,6 +52,24 @@ const IconStar = ({ className }) => (
     className={className}
   >
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+);
+
+const IconX = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M18 6L6 18"></path>
+    <path d="M6 6l12 12"></path>
   </svg>
 );
 
@@ -109,11 +125,15 @@ export default function App() {
       {/* Main content card with upgraded shadow and border */}
       <div className="w-full max-w-2xl rounded-2xl bg-white/70 p-6 shadow-2xl backdrop-blur-lg transition-all duration-300 sm:p-10 border border-gray-200">
         
-        {/* Header Section (Dark mode button removed) */}
+        {/* Header Section */}
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             React Hooks Showcase
           </h1>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">Interactive Demo</p>
+            <p className="text-xs text-gray-500">Explore React Hooks</p>
+          </div>
         </div>
 
         {/* Grid for the demo sections */}
@@ -126,16 +146,30 @@ export default function App() {
             title="useState Demo"
             description="Manages component state. Type here to see it in action."
           >
-            <input
-              type="text"
-              value={text}
-              onChange={handleTextChange}
-              placeholder="Type something..."
-              className="w-full rounded-lg border border-gray-300 bg-white/50 p-3 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-600"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={text}
+                onChange={handleTextChange}
+                placeholder="Type something..."
+                className="w-full rounded-lg border border-gray-300 bg-white/50 p-3 pr-12 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-600"
+              />
+              {text && (
+                <button
+                  onClick={() => setText('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear text"
+                >
+                  <IconX className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             <p className="mt-3 rounded-lg bg-blue-50 p-3 text-sm text-blue-700 border border-blue-200">
                 <span className="font-medium">Current State:</span> {text || '...'}
               </p>
+            <p className="mt-2 text-xs text-gray-500">
+              Characters: {text.length}
+            </p>
           </DemoCard>
 
           {/* 2. useEffect Demo Card */}
@@ -148,6 +182,15 @@ export default function App() {
             <p className="text-sm rounded-lg bg-green-50 p-3 text-green-700 border border-green-200">
               Check your browser tab right now!
             </p>
+            <div className="mt-3 flex items-center space-x-2">
+              <button
+                onClick={() => document.title = 'React Hooks Showcase'}
+                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-green-700 hover:shadow-md"
+              >
+                Reset Title
+              </button>
+              <span className="text-xs text-gray-500">Click to reset the tab title</span>
+            </div>
           </DemoCard>
 
           {/* 3. Custom Hook Demo Card (NEW) */}
@@ -164,6 +207,9 @@ export default function App() {
               </p>
               <p className="text-sm text-purple-600">
                 <span className="font-medium">Previous Value:</span> {prevText || '...'}
+              </p>
+              <p className="text-xs text-gray-500 mt-2">
+                Change count: {text !== prevText ? 'Value changed!' : 'No change'}
               </p>
             </div>
 
@@ -191,12 +237,12 @@ const prevText = usePrevious(text);`}
   );
 }
 
-// A reusable component to make the demo cards look nice (no dark mode classes)
+// A reusable component to make the demo cards look nice
 function DemoCard({ icon, iconBg, title, description, children }) {
   return (
-    <div className="rounded-xl border border-gray-200/50 bg-white/50 p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+    <div className="rounded-xl border border-gray-200/50 bg-white/50 p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:bg-white/60">
       <div className="mb-4 flex items-center space-x-4">
-        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${iconBg} shadow-md`}>
+        <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${iconBg} shadow-md transition-transform duration-300 hover:scale-110`}>
           {icon}
         </div>
         <h2 className="text-xl font-semibold text-gray-900">
