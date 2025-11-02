@@ -1,4 +1,5 @@
 import random
+import time
 from dataclasses import dataclass
 
 # === Helper Functions ===
@@ -64,29 +65,40 @@ class RSAKeyPair:
 
 def generate_rsa_keypair(bits: int = 512, e: int = 65537) -> RSAKeyPair:
     print("\n=== Generating RSA Keys ===")
+    start_time = time.time()
+    
     p = generate_prime(bits // 2)
     q = generate_prime(bits // 2)
     n = p * q
     phi = (p - 1) * (q - 1)
     d = modinv(e, phi)
+    
+    end_time = time.time()
     print(f"Prime p: {p}")
     print(f"Prime q: {q}")
     print(f"Modulus (n): {n}")
     print(f"Totient (φ): {phi}")
     print(f"Public Exponent (e): {e}")
-    print(f"Private Exponent (d): {d}\n")
+    print(f"Private Exponent (d): {d}")
+    print(f"Key Generation Time: {end_time - start_time:.4f} seconds\n")
+    
     return RSAKeyPair(n, e, d)
 
 # === RSA Encrypt/Decrypt ===
-def encrypt(message: str, pubkey: RSAKeyPair) -> int:
+def encrypt(message: str, pubkey: RSAKeyPair) -> (int, float):
     m = int_from_bytes(message.encode())
     if m >= pubkey.n:
         raise ValueError("Message too large for key size!")
-    return pow(m, pubkey.e, pubkey.n)
+    start_time = time.time()
+    c = pow(m, pubkey.e, pubkey.n)
+    end_time = time.time()
+    return c, end_time - start_time
 
-def decrypt(cipher: int, privkey: RSAKeyPair) -> str:
+def decrypt(cipher: int, privkey: RSAKeyPair) -> (str, float):
+    start_time = time.time()
     m = pow(cipher, privkey.d, privkey.n)
-    return int_to_bytes(m).decode(errors='ignore')
+    end_time = time.time()
+    return int_to_bytes(m).decode(errors='ignore'), end_time - start_time
 
 # === Main Program ===
 if __name__ == "__main__":
@@ -95,8 +107,10 @@ if __name__ == "__main__":
     keypair = generate_rsa_keypair(bits)
 
     message = input("Enter a message to encrypt: ")
-    cipher = encrypt(message, keypair)
+    cipher, enc_time = encrypt(message, keypair)
     print(f"\nEncrypted Message: {cipher}")
+    print(f"Encryption Time: {enc_time:.6f} seconds")
 
-    decrypted = decrypt(cipher, keypair)
+    decrypted, dec_time = decrypt(cipher, keypair)
     print(f"Decrypted Message: {decrypted}")
+    print(f"Decryption Time: {dec_time:.6f} seconds")
