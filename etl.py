@@ -1,6 +1,5 @@
 # ===============================================
 # Retail Sales Data Warehouse with ETL + OLAP
-# Author: Sameeksha Sankpal
 # ===============================================
 
 import pandas as pd
